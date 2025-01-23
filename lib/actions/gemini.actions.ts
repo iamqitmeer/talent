@@ -50,6 +50,15 @@ export async function generateEducationDescription(educationInfo: string) {
 
   return JSON.parse(result);
 }
+
+export async function generateExperienceDescription(experienceInfo: string) {
+  const prompt = `Given that I have experience working as ${experienceInfo}, provide a summary of three levels of activities I performed in that position, preferably as a list: High Activity, Medium Activity, and Low Activity. Each summary should be 3-4 lines long and written from my perspective, reflecting on my past experiences in that workplace. The output should be an array of JSON objects, each containing 'activity_level' and 'description' fields. You can include <b>, <i>, <u>, <s>, <blockquote>, <ul>, <ol>, and <li> to further enhance the descriptions. Use example work samples if needed, but do not insert placeholders for me to fill in.`;
+
+  const result = await askGemini(prompt);
+
+  return JSON.parse(result);
+}
+
 // from ${startDate} to ${endDate}. , startDate, endDate
 export async function generateProjectDescription(projectTitle: string) {
   const prompt = `I worked on a project titled "${projectTitle}"  Please provide a summary of three levels of activities I performed during this time, preferably as a list: High Activity, Medium Activity, and Low Activity. Each summary should be 3-4 lines long and written from my perspective, reflecting on my past experiences in that project. The output should be an array of JSON objects, each containing 'activity_level' and 'description' fields. You can include <b>, <i>, <u>, <s>, <blockquote>, <ul>, <ol>, and <li> to further enhance the descriptions. Use example work samples if needed, but do not insert placeholders for me to fill in.`;
