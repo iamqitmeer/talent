@@ -1,9 +1,5 @@
 "use client";
-import {
-  motion,
-  AnimatePresence,
-  useInView,
-} from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
   ArrowBigUp,
