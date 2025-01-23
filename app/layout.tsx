@@ -16,7 +16,6 @@ export const metadata: Metadata = {
     icon: "/icons/favicon.ico",
   },
 };
-const clerkFrontendApi = process.env.CLERK_FRONTEND_API; // Make sure this is correctly set
 
 export default function RootLayout({
   children,
@@ -25,7 +24,6 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
-    frontendApi={clerkFrontendApi}
       afterSignOutUrl="/"
       appearance={{
         layout: {
