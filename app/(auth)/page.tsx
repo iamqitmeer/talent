@@ -1,8 +1,6 @@
 "use client";
 import {
   motion,
-  useScroll,
-  useTransform,
   AnimatePresence,
   useInView,
 } from "framer-motion";
@@ -34,7 +32,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -83,16 +81,20 @@ import {
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Header from "@/components/layout/Header";
 import PageWrapper from "@/components/common/PageWrapper";
+import { useTransform, useScroll } from "framer-motion";
+
 const useScrollAnimation = (start = 0, end = 100) => {
   const [elementTop, setElementTop] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
-  const element = useRef(null);
+  const element = useRef<HTMLDivElement>(null);
 
   const onScroll = useCallback(() => {
     const scrollY = window.pageYOffset;
-    const elementRect = element.current.getBoundingClientRect();
-    setElementTop(elementRect.top + scrollY);
-    setClientHeight(window.innerHeight);
+    if (element.current) {
+      const elementRect = element.current.getBoundingClientRect();
+      setElementTop(elementRect.top + scrollY);
+      setClientHeight(window.innerHeight);
+    }
   }, []);
 
   useEffect(() => {
@@ -107,6 +109,7 @@ const useScrollAnimation = (start = 0, end = 100) => {
 
   return { ref: element, scroll };
 };
+
 const Page = () => {
   const user = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -168,186 +171,7 @@ const Page = () => {
   return (
     <PageWrapper>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        {/* Header Section */}
-        {/* <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-md shadow-lg"
-      >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link
-              href="/"
-              className="text-2xl font-bold text-primary-700 flex items-center"
-            >
-              <motion.div
-                initial={{ rotate: 0 }}
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 2,
-                  ease: "easeInOut",
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                }}
-              >
-                <Sparkles className="mr-2 h-8 w-8 text-primary-500" />
-              </motion.div>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                Talent AI
-              </span>
-            </Link>
-            <nav className="hidden md:flex space-x-8">
-              {[
-                "Features",
-                "How It Works",
-                "Pricing",
-                "Testimonials",
-                "Blog",
-                "Resources",
-                "Contact",
-              ].map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-gray-700 hover:text-primary-500 transition-colors font-medium"
-                  >
-                    {item}
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
-            <div className="hidden md:flex space-x-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Button
-                  asChild
-                  className="bg-primary-500 hover:bg-primary-600 text-white"
-                >
-                  <Link
-                    href={`${!user?.isSignedIn ? "/sign-up" : "/dashboard"}`}
-                  >
-                    {!user?.isSignedIn ? "Register" : "Dashboard"}
-                  </Link>
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                {user?.isLoaded && !user?.isSignedIn ? (
-                  <Link
-                    href="/sign-in"
-                    className="text-gray-800 hover:bg-primary-700/10 duration-300 focus:ring-4 focus:ring-primary-700/30 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-                  >
-                    Log in
-                  </Link>
-                ) : (
-                  <>
-                    <div className="mr-4 h-full items-center align-middle flex max-md:hidden justify-center">
-                      <UserButton showName={true} />
-                    </div>
-                    <div className="mr-4 h-full items-center align-middle hidden max-md:flex justify-center">
-                      <UserButton showName={false} />
-                    </div>
-                  </>
-                )}{" "}
-              </motion.div>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-primary-500"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
-          </div>
-        </div>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-white/80 backdrop-blur-md shadow-lg rounded-b-lg overflow-hidden"
-            >
-              <nav className="flex flex-col p-4 space-y-4">
-                {[
-                  "Features",
-                  "How It Works",
-                  "Pricing",
-                  "Testimonials",
-                  "Blog",
-                  "Resources",
-                  "Contact",
-                ].map((item) => (
-                  <Link
-                    key={item}
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-gray-700 hover:text-primary-500 transition-colors font-medium"
-                  >
-                    {item}
-                  </Link>
-                ))}
-                <Button
-                  asChild
-                  className="w-full bg-primary-500 hover:bg-primary-600 text-white"
-                >
-                  <Link
-                    href={`${!user?.isSignedIn ? "/sign-up" : "/dashboard"}`}
-                  >
-                    {!user?.isSignedIn ? "Register" : "Dashboard"}
-                  </Link>
-
-
-
-                </Button>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  {user?.isLoaded && !user?.isSignedIn ? (
-                    <Link
-                      href="/sign-in"
-                      className="text-gray-800 hover:bg-primary-700/10 duration-300 focus:ring-4 focus:ring-primary-700/30 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
-                    >
-                      Log in
-                    </Link>
-                  ) : (
-                    <>
-                      <div className="mr-4 h-full items-center align-middle flex max-md:hidden justify-center">
-                        <UserButton showName={true} />
-                      </div>
-                      <div className="mr-4 h-full items-center align-middle hidden max-md:flex justify-center">
-                        <UserButton showName={false} />
-                      </div>
-                    </>
-                  )}{" "}
-                </motion.div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header> */}
-
         <Header />
-
         {/* Hero Section */}
         <motion.section
           ref={heroRef}
