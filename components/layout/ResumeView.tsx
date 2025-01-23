@@ -44,6 +44,7 @@ import {
   FileTextIcon,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+// @ts-ignore
 import html2pdf from "html2pdf.js";
 
 const FinalResumeView = ({
